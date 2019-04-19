@@ -3,22 +3,22 @@ package com.tysovsky.customerapp.arcsoft.sdk_demo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
 
+import com.tysovsky.customerapp.FaceDB;
 
 
 public class FaceApplication extends android.app.Application {
 	private final String TAG = this.getClass().toString();
-	FaceDB mFaceDB;
-	Uri mImage;
+	public FaceDB mFaceDB;
+	public Uri mImage;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mFaceDB = new FaceDB(this.getExternalCacheDir().getPath());
-		mImage = null;
+
 	}
 
 	public void setCaptureImage(Uri uri) {

@@ -38,13 +38,15 @@ import com.arcsoft.facerecognition.AFR_FSDKVersion;
 import com.guo.android_extend.image.ImageConverter;
 import com.guo.android_extend.widget.ExtImageView;
 import com.guo.android_extend.widget.HListView;
+import com.tysovsky.customerapp.FaceDB;
+import com.tysovsky.customerapp.Fragments.LoginFragment;
 import com.tysovsky.customerapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+import com.tysovsky.customerapp.GlobalApplication;
 
 public class FaceRegisterActivity extends Activity implements SurfaceHolder.Callback {
 	private final String TAG = this.getClass().toString();
@@ -88,7 +90,7 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 		mHListView.setOnItemClickListener(mRegisterViewAdapter);
 
 		mUIHandler = new UIHandler();
-		mBitmap = FaceApplication.decodeImage(mFilePath);
+		mBitmap = LoginFragment.decodeImage(mFilePath);
 		src.set(0,0,mBitmap.getWidth(),mBitmap.getHeight());
 		mSurfaceView = (SurfaceView)this.findViewById(R.id.surfaceView);
 		mSurfaceView.getHolder().addCallback(this);
@@ -282,7 +284,7 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 							.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									((FaceApplication) FaceRegisterActivity.this.getApplicationContext()).mFaceDB.addFace(mEditText.getText().toString(), mAFR_FSDKFace, face);
+									((GlobalApplication)getApplicationContext()).mFaceDB.addFace(mEditText.getText().toString(), mAFR_FSDKFace, face);
 									mRegisterViewAdapter.notifyDataSetChanged();
 									dialog.dismiss();
 								}
@@ -327,7 +329,7 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return ((FaceApplication)mContext.getApplicationContext()).mFaceDB.mRegister.size();
+			return ((GlobalApplication) mContext.getApplicationContext()).mFaceDB.mRegister.size();
 		}
 
 		@Override
@@ -356,8 +358,8 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 				convertView.setTag(holder);
 			}
 
-			if (!((FaceApplication)mContext.getApplicationContext()).mFaceDB.mRegister.isEmpty()) {
-				FaceDB.FaceRegist face = ((FaceApplication) mContext.getApplicationContext()).mFaceDB.mRegister.get(position);
+			if (!((GlobalApplication)mContext.getApplicationContext()).mFaceDB.mRegister.isEmpty()) {
+				FaceDB.FaceRegist face = ((GlobalApplication) mContext.getApplicationContext()).mFaceDB.mRegister.get(position);
 				holder.tv.setText(face.mName);
 				String keyPath = face.mFaceList.keySet().iterator().next();
                 holder.siv.setImageBitmap(BitmapFactory.decodeFile(keyPath));
@@ -372,9 +374,9 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			Log.d("onItemClick", "onItemClick = " + position + "pos=" + mHListView.getScroll());
-			final String name = ((FaceApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mName;
-			final int count = ((FaceApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mFaceList.size();
-			final Map<String, AFR_FSDKFace> face = ((FaceApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mFaceList;
+			final String name = ((GlobalApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mName;
+			final int count = ((GlobalApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mFaceList.size();
+			final Map<String, AFR_FSDKFace> face = ((GlobalApplication)mContext.getApplicationContext()).mFaceDB.mRegister.get(position).mFaceList;
 			new AlertDialog.Builder(FaceRegisterActivity.this)
 					.setTitle("Delete Username:" + name)
 					.setMessage("Contains:" + count + "user facial feature")
@@ -383,7 +385,7 @@ public class FaceRegisterActivity extends Activity implements SurfaceHolder.Call
 					.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							((FaceApplication)mContext.getApplicationContext()).mFaceDB.delete(name);
+							((GlobalApplication)mContext.getApplicationContext()).mFaceDB.delete(name);
 							mRegisterViewAdapter.notifyDataSetChanged();
 							dialog.dismiss();
 						}

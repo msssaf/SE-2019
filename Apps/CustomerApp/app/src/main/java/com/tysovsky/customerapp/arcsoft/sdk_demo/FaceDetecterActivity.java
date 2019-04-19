@@ -44,6 +44,8 @@ import com.guo.android_extend.widget.CameraFrameData;
 import com.guo.android_extend.widget.CameraGLSurfaceView;
 import com.guo.android_extend.widget.CameraSurfaceView;
 import com.guo.android_extend.widget.CameraSurfaceView.OnCameraListener;
+import com.tysovsky.customerapp.FaceDB;
+import com.tysovsky.customerapp.GlobalApplication;
 import com.tysovsky.customerapp.R;
 
 import java.io.IOException;
@@ -95,7 +97,7 @@ public class FaceDetecterActivity extends Activity implements OnCameraListener, 
 		AFR_FSDKVersion version = new AFR_FSDKVersion();
 		AFR_FSDKEngine engine = new AFR_FSDKEngine();
 		AFR_FSDKFace result = new AFR_FSDKFace();
-		List<FaceDB.FaceRegist> mResgist = ((FaceApplication) FaceDetecterActivity.this.getApplicationContext()).mFaceDB.mRegister;
+		List<FaceDB.FaceRegist> mResgist = ((GlobalApplication) FaceDetecterActivity.this.getApplicationContext()).mFaceDB.mRegister;
 		List<ASAE_FSDKFace> face1 = new ArrayList<>();
 		List<ASGE_FSDKFace> face2 = new ArrayList<>();
 		

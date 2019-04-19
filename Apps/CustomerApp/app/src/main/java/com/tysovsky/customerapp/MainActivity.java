@@ -4,13 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -21,10 +18,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.tysovsky.customerapp.BroadcastReceivers.AccessPointBroadcastReceiver;
 import com.tysovsky.customerapp.Fragments.CartFragment;
@@ -37,6 +32,7 @@ import com.tysovsky.customerapp.Models.OrderItem;
 import com.tysovsky.customerapp.Models.User;
 import com.tysovsky.customerapp.Network.NetworkManager;
 import com.tysovsky.customerapp.Network.RequestType;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,15 +51,24 @@ public class MainActivity extends AppCompatActivity
     AccessPointBroadcastReceiver wifiReceiver;
 
 
+
+
     //Hardcoding this for now
     User user = User.getCurrentUser();//new User("5c967e32d2e79f4afc43fdef");
     Cart cart = new Cart(user);
 
+
+
+    private final String TAG = this.getClass().toString();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+
+
+        setContentView(R.layout.activity_main);
         setUpViews();
 
         if(savedInstanceState == null){
@@ -154,6 +159,7 @@ public class MainActivity extends AppCompatActivity
         updateNavigationDrawer();
     }
 
+
     public void updateNavigationDrawer(){
         //If user currently logged in, hide the login button, otherwise hide the logout button
         if(user == null){
@@ -174,7 +180,10 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_WIFI_STATE,
-                Manifest.permission.CHANGE_WIFI_STATE
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -282,4 +291,5 @@ public class MainActivity extends AppCompatActivity
         cart.clean();
         cartFragment.notifyCartUpdate();
     }
+
 }
