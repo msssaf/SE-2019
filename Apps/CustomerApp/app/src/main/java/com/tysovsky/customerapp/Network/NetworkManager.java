@@ -1,5 +1,6 @@
 package com.tysovsky.customerapp.Network;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.tysovsky.customerapp.Interfaces.NetworkResponseListener;
@@ -10,6 +11,7 @@ import com.tysovsky.customerapp.Models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class NetworkManager{
     private static NetworkManager networkManager = new NetworkManager();
 
     private NetworkManager(){
-        httpClient = new OkHttpClient();
+        httpClient = new OkHttpClient.Builder().cookieJar(new PersistentCookieJar()).build();
     }
     public static NetworkManager getInstance(){
         return networkManager;
@@ -34,6 +36,61 @@ public class NetworkManager{
 
     public void addListener(NetworkResponseListener listener){
         listeners.add(listener);
+    }
+
+    public void login(String username, String password){
+        httpClient.newCall(RequestProvider.loginRequest(username, password)).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    for (NetworkResponseListener listener: listeners) {
+                        listener.OnNetworkResponseReceived(RequestType.LOGIN, jsonObject);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void logout(){
+
+        httpClient.newCall(RequestProvider.logoutRequest()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ((PersistentCookieJar)httpClient.cookieJar()).clearAllCookies();
+                User.deleteCurrentUser();
+                for (NetworkResponseListener listener: listeners) {
+                    listener.OnNetworkResponseReceived(RequestType.LOGOUT, null);
+                }
+            }
+        });
+    }
+
+    //Test method to make sure authentication works
+    public void secret(){
+        httpClient.newCall(RequestProvider.secretRequest()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String res = response.body().string();
+            }
+        });
     }
 
     public void getMenu(){
@@ -56,7 +113,7 @@ public class NetworkManager{
                             mItem.Description = jMenu.getJSONObject(i).getString("description");
                             mItem.Price = (float) jMenu.getJSONObject(i).getDouble("price");
                             mItem.PhotoUrl = "http://ec2-52-39-140-122.us-west-2.compute.amazonaws.com/public/images/menu/" + jMenu.getJSONObject(i).getString("filename");
-
+                            mItem.Type = jMenu.getJSONObject(i).getString("type");
                             menu.getItems().add(mItem);
                         }
                         catch (Exception e){
@@ -64,6 +121,7 @@ public class NetworkManager{
                         }
                     }
 
+                    //menu.sortByType();
                     for (NetworkResponseListener listener: listeners) {
                         listener.OnNetworkResponseReceived(RequestType.GET_MENU, menu);
                     }
@@ -105,4 +163,6 @@ public class NetworkManager{
         });
 
     }
+
+
 }
