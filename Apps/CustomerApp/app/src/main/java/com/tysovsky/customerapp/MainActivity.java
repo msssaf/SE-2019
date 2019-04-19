@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -18,21 +21,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.tysovsky.customerapp.BroadcastReceivers.AccessPointBroadcastReceiver;
 import com.tysovsky.customerapp.Fragments.CartFragment;
 import com.tysovsky.customerapp.Fragments.LoginFragment;
 import com.tysovsky.customerapp.Fragments.MenuFragment;
 import com.tysovsky.customerapp.Fragments.MenuItemFragment;
+import com.tysovsky.customerapp.Fragments.ProfileEditFragment;
+import com.tysovsky.customerapp.Fragments.ProfileFragment;
 import com.tysovsky.customerapp.Interfaces.NetworkResponseListener;
 import com.tysovsky.customerapp.Models.Cart;
 import com.tysovsky.customerapp.Models.OrderItem;
 import com.tysovsky.customerapp.Models.User;
 import com.tysovsky.customerapp.Network.NetworkManager;
 import com.tysovsky.customerapp.Network.RequestType;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,29 +52,23 @@ public class MainActivity extends AppCompatActivity
     MenuItemFragment menuItemFragment = new MenuItemFragment();
     CartFragment cartFragment = new CartFragment();
     LoginFragment loginFragment = new LoginFragment();
+    ProfileFragment profileFragment = new ProfileFragment();
+    ProfileEditFragment profileEditFragment = new ProfileEditFragment();
+
     FragmentManager fragmentManager;
 
     AccessPointBroadcastReceiver wifiReceiver;
-
-
 
 
     //Hardcoding this for now
     User user = User.getCurrentUser();//new User("5c967e32d2e79f4afc43fdef");
     Cart cart = new Cart(user);
 
-
-
-    private final String TAG = this.getClass().toString();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         setContentView(R.layout.activity_main);
+
         setUpViews();
 
         if(savedInstanceState == null){
@@ -93,6 +93,11 @@ public class MainActivity extends AppCompatActivity
             if(fragmentManager.findFragmentByTag(LoginFragment.TAG) != null){
                 loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginFragment.TAG);
             }
+            if(fragmentManager.findFragmentByTag(ProfileFragment.TAG) != null) {
+                profileFragment = (ProfileFragment) fragmentManager.findFragmentByTag(ProfileFragment.TAG);
+            }
+
+
         }
 
 
@@ -159,7 +164,6 @@ public class MainActivity extends AppCompatActivity
         updateNavigationDrawer();
     }
 
-
     public void updateNavigationDrawer(){
         //If user currently logged in, hide the login button, otherwise hide the logout button
         if(user == null){
@@ -168,6 +172,7 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
         }
         else{
+            user = User.getCurrentUser();
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
@@ -237,6 +242,12 @@ public class MainActivity extends AppCompatActivity
             wifi.getScanResults();
         }
 
+        else if (id == R.id.nav_profile){
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.main_container, profileFragment, ProfileFragment.TAG);
+            transaction.commit();
+        }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -246,6 +257,13 @@ public class MainActivity extends AppCompatActivity
         menuItemFragment.setCurrentMenuItem(item);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.main_container, menuItemFragment, MenuItemFragment.TAG);
+        transaction.commit();
+    }
+
+    public void showEditFragment(){
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.main_container, profileEditFragment, ProfileEditFragment.TAG);
         transaction.commit();
     }
 
@@ -291,5 +309,4 @@ public class MainActivity extends AppCompatActivity
         cart.clean();
         cartFragment.notifyCartUpdate();
     }
-
 }

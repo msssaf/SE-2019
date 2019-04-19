@@ -23,13 +23,12 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.view.View.OnClickListener;
 
 import com.tysovsky.customerapp.FaceDB;
 import com.tysovsky.customerapp.GlobalApplication;
@@ -37,15 +36,12 @@ import com.tysovsky.customerapp.Interfaces.NetworkResponseListener;
 import com.tysovsky.customerapp.Network.NetworkManager;
 import com.tysovsky.customerapp.Network.RequestType;
 import com.tysovsky.customerapp.R;
+import com.tysovsky.customerapp.arcsoft.sdk_demo.FaceApplication;
 import com.tysovsky.customerapp.arcsoft.sdk_demo.FaceDetecterActivity;
 import com.tysovsky.customerapp.arcsoft.sdk_demo.FaceRegisterActivity;
-import com.tysovsky.customerapp.arcsoft.sdk_demo.FaceApplication;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
 
 
 public class LoginFragment extends Fragment implements NetworkResponseListener {
