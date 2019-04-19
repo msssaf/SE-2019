@@ -138,8 +138,8 @@ public class DetecterActivity extends Activity implements OnCameraListener, View
 				ASGE_FSDKError error2 = mGenderEngine.ASGE_FSDK_GenderEstimation_Image(mImageNV21, mWidth, mHeight, AFT_FSDKEngine.CP_PAF_NV21, face2, genders);
 				Log.d(TAG, "ASAE_FSDK_AgeEstimation_Image:" + error1.getCode() + ",ASGE_FSDK_GenderEstimation_Image:" + error2.getCode());
 				Log.d(TAG, "age:" + ages.get(0).getAge() + ",gender:" + genders.get(0).getGender());
-				final String age = ages.get(0).getAge() == 0 ? "年龄未知" : ages.get(0).getAge() + "岁";
-				final String gender = genders.get(0).getGender() == -1 ? "性别未知" : (genders.get(0).getGender() == 0 ? "男" : "女");
+				final String age = ages.get(0).getAge() == 0 ? "Age Unknown" : ages.get(0).getAge() + " years old";
+				final String gender = genders.get(0).getGender() == -1 ? "Gender Unknown" : (genders.get(0).getGender() == 0 ? "Male" : "Female");
 				
 				//crop
 				byte[] data = mImageNV21;
@@ -166,7 +166,7 @@ public class DetecterActivity extends Activity implements OnCameraListener, View
 							mTextView.setText(mNameShow);
 							mTextView.setTextColor(Color.RED);
 							mTextView1.setVisibility(View.VISIBLE);
-							mTextView1.setText("置信度：" + (float)((int)(max_score * 1000)) / 1000.0);
+							mTextView1.setText("Matching Rate：" + (float)((int)(max_score * 1000)) / 1000.0);
 							mTextView1.setTextColor(Color.RED);
 							mImageView.setRotation(rotate);
 							mImageView.setScaleY(-mCameraMirror);
@@ -175,7 +175,7 @@ public class DetecterActivity extends Activity implements OnCameraListener, View
 						}
 					});
 				} else {
-					final String mNameShow = "未识别";
+					final String mNameShow = "Unidentified";
 					DetecterActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
